@@ -80,28 +80,40 @@ class tx_cobj_xslt {
 				// import this into a DOM object						
 				$domXML = dom_import_simplexml($xml);
 							
-				if ($domXML !== FALSE) {
-					
-					// set stylesheets (several possible, content will be 'piped' through all of them
+				if ($domXML !== FALSE) {					
+					// set stylesheets (several possible, keys freely choosable, content will be 'piped' through all of them
 					if (is_array($conf['stylesheets.']) && count($conf['stylesheets.']) > 0) {
-						$xsltStylesheets = array();
-						foreach ($conf['stylesheets.'] as $key => $stylesheet) {
-							$file = $oCObj->stdWrap($stylesheet, $conf[$key.'.']);
-							if (t3lib_div::validPathStr($xsltStylesheet)) $xsltStylesheets[$key] = $file;
+						$xslStylesheets = array();
+						foreach ($conf['stylesheets.'] as $key => $stylesheet) {					
+							if (substr($key, -1) == '.') {							
+								$value = $oCObj->stdWrap('', $conf['stylesheets.'][$key]);	
+								$xslStylesheets[substr($key, 0, -1)] = $value;															
+							} else {							
+								$xslStylesheets[$key] = $stylesheet;
+							}
 						}
-						ksort($xsltStylesheets, SORT_REGULAR);					
+						ksort($xslStylesheets, SORT_REGULAR);					
 					} else {
 						$GLOBALS['TT']->setTSlogMessage('You must define some XSL stylesheets for processing the source', 3);
-					}				
+					}	
 			
-					if (count($xsltStylesheets) > 0) {
+					if (count($xslStylesheets) > 0) {
 						
-						foreach ($xsltStylesheets as $stylesheet) {
-							
-							// load current stylesheet
+						foreach ($xslStylesheets as $index => $stylesheet) {
+	
+							// load current stylesheet...
 							$xsl = t3lib_div::makeInstance('DOMDocument');
-							$xsl->load($stylesheet);
-												
+							
+							// ...either from file
+							$file = t3lib_div::getFileAbsFileName($stylesheet);							
+							if (t3lib_div::isAbsPath($file) == TRUE) {
+								$xsl->load($file);
+							// ...or from an xml string
+							} else {
+								$xsl->loadXML($stylesheet);
+							}							
+
+							// start processing				
 							if ($xsl instanceof DOMDocument) {
 								// create a new processor and import current stylesheet
 								$xslt = t3lib_div::makeInstance('XSLTProcessor');
@@ -143,25 +155,36 @@ class tx_cobj_xslt {
 								
 								// if there already was a result from a former transformation...
 								if ($result) {
-									// load the transformed XML into a new DOM object
+																		
+									// load the formerly transformed XML into a new DOM object
 									$formerResult = t3lib_div::makeInstance('DOMDocument');
-									$formerResult->loadXML($result);
-									// and do a new transformation with the current stylesheet
-									$result = $xslt->transformToXML($formerResult);
+
+									// the of the former transformation is valid, apply the new transformation
+									if ($formerResult->loadXML($result) !== FALSE) {
+										$result = $xslt->transformToXML($formerResult);
+									} else {
+										$GLOBALS['TT']->setTSlogMessage('The XML transformation with '.$index.' failed because the XML resulting from the former transformation could not be processed.', 3);
+									}
+									
 								// if this is the first run pass the already loaded DOM object
 								} else {
-									$result = $xslt->transformToXML($domXML);								
+									$result = $xslt->transformToXML($domXML);														
 								}
 								
 								// debug output
 								if (isset($conf['debug'])) t3lib_div::debug($result);
 								
+// setProfiling
+								
 							} else {
-								$GLOBALS['TT']->setTSlogMessage('The stylesheet '.$stylesheet.' could not be loaded.', 3);								
+								$GLOBALS['TT']->setTSlogMessage('The stylesheet '.$index.' could not be loaded or contained errors.', 3);								
 							}
 						}
 						
 						$content = $result;
+						
+// transformToURI ?
+						
 						return $oCObj->stdWrap($content, $conf['stdWrap.']);
 						
 					} else {
@@ -170,7 +193,7 @@ class tx_cobj_xslt {
 					}							
 					
 				} else {
-					$GLOBALS['TT']->setTSlogMessage('XML could not be converted to DOM object.', 3);
+					$GLOBALS['TT']->setTSlogMessage('XML could not be converted to a DOM object.', 3);
 					return $oCObj->stdWrap($content, $conf['stdWrap.']);
 				}
 				

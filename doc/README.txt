@@ -1,12 +1,12 @@
 my.object = XSLT
 my.object {
 
-	source = [STRING + stdWrap]
+	source = [STRING / stdWrap]
 	source.url = [URL]
 	
 	stylesheets {
-		file1 = [STRING / PATH + stdWrap]
-		file2 = [STRING / PATH + stdWrap]
+		file1 = [STRING / PATH / stdWrap]
+		file2 = [STRING / PATH / stdWrap]
 	}
 	
 	registerPHPFunctions = [BOOLEAN / ARRAY]	
