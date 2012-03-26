@@ -22,66 +22,75 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-if (!defined ('TYPO3_MODE'))
-	die ('Access denied.');
+if (!defined('TYPO3_MODE')) {
+	die('Access denied.');
+}
 
 /**
- * Extends tslib_cObj with an XSLT cobject
- * 
+ * Extends tslib_cObj with XSLT cobject
+ *
+ * @access public
  * @author Torsten Schrade
  * @package TYPO3
  * @subpackage tx_cobj_xslt
- * @access public
  */
 class tx_cobj_xslt {
 
 	/**
-	 * Rendering function for the XSLT content object
+	 * Renders the XSLT content object
 	 * 
-	 * @param 	string	XSLT
-	 * @param	array	TypoScript configuration of the cObj
-	 * @param	string	Key in the TypoScript array passed to this function
-	 * @param	object	Reference to the parent class
+	 * @param string $name XSLT
+	 * @param array	$conf TypoScript configuration of the cObj
+	 * @param string $TSKey Key in the TypoScript array passed to this function
+	 * @param object $oCObj	Reference to the parent class
 	 * 
-	 * @return	void
+	 * @return string The transformed XML string
 	 * 
 	 */
-	public function cObjGetSingleExt($name, $conf, $TSkey, &$oCObj) {
+	public function cObjGetSingleExt($name, array $conf, $TSkey, tslib_cobj &$oCObj) {
 
 		$content = '';
 		
-		// fetch xml data
+			// Check if XML extensions are loaded at all
+		if (!extension_loaded('SimpleXML') || !extension_loaded('libxml')) {
+			$GLOBALS['TT']->setTSlogMessage('The PHP extensions SimpleXML, libxml amd DOM must be loaded.', 3);
+			return $oCObj->stdWrap($content, $conf['stdWrap.']);
+		} elseif (!extension_loaded('dom')) {
+			$GLOBALS['TT']->setTSlogMessage('The PHP extension DOM must be loaded.', 3);
+			return $oCObj->stdWrap($content, $conf['stdWrap.']);			
+		}
+		
+			// Fetch XML data
 		if (is_array($conf['source.']) || isset($conf['source'])) {
 						
-			// get XML by url
+				// Get XML by external url
 			if (isset($conf['source.']['url']) && t3lib_div::isValidUrl($conf['source.']['url'])) {
 				
 				$xmlsource = t3lib_div::getURL($conf['source.']['url'], 0, FALSE);
 				if (!$xmlsource) $GLOBALS['TT']->setTSlogMessage('XML could not be fetched from URL.', 3);
 				
-			// get XML with stdWrap
+				// Get XML with stdWrap
 			} else {
 				if ($conf['source.']['url']) unset($conf['source.']['url']);
 				$xmlsource = $oCObj->stdWrap($conf['source'], $conf['source.']);				
 			}		
 		} else {
 			$GLOBALS['TT']->setTSlogMessage('Source for XML is not configured.', 3);
-			return $oCObj->stdWrap($content, $conf['stdWrap.']);
 		}
 		
-		if ($xmlsource) {		
+		if (!empty($xmlsource)) {		
 			
-			// try to load a simpleXML object
+				// Try to load a simpleXML object
 			libxml_use_internal_errors(true);
 			$xml = simplexml_load_string($xmlsource);
 			
 			if ($xml instanceof SimpleXMLElement) {
 					
-				// import this into a DOM object						
+					// Import this into a DOM object						
 				$domXML = dom_import_simplexml($xml);
 							
 				if ($domXML !== FALSE) {					
-					// set stylesheets (several possible, keys freely choosable, content will be 'piped' through all of them
+						// Set stylesheets (several possible, keys freely choosable, content will be 'piped' through all of them
 					if (is_array($conf['stylesheets.']) && count($conf['stylesheets.']) > 0) {
 						$xslStylesheets = array();
 						foreach ($conf['stylesheets.'] as $key => $stylesheet) {					
@@ -101,31 +110,38 @@ class tx_cobj_xslt {
 						
 						foreach ($xslStylesheets as $index => $stylesheet) {
 	
-							// load current stylesheet...
+								// Load current stylesheet...
 							$xsl = t3lib_div::makeInstance('DOMDocument');
 							
-							// ...either from file
+								// Load the styles from file
 							$file = t3lib_div::getFileAbsFileName($stylesheet);							
 							if (t3lib_div::isAbsPath($file) == TRUE) {
 								$xsl->load($file);
-							// ...or from an xml string
+								// Load the styles from an XML string
 							} else {
 								$xsl->loadXML($stylesheet);
 							}							
 
-							// start processing				
+								// Start XSLT processing				
 							if ($xsl instanceof DOMDocument) {
-								// create a new processor and import current stylesheet
+									// Create a new processor and import current stylesheet
 								$xslt = t3lib_div::makeInstance('XSLTProcessor');
 								$xslt->importStylesheet($xsl);
 								
-								// possibility to register PHP functions for usage within the XSL stylesheets
+									// Activate profiling if configured
+									// @TODO: PHP 5.3 check
+								if (isset($conf['setProfiling'])) {
+									$profilingTempFile = t3lib_div::tempnam('xslt_profiler_');
+									$xslt->setProfiling($profilingTempFile);
+								}
+								
+									// Possibility to register PHP functions for usage within the XSL stylesheets
 								if ($conf['registerPHPFunctions']) {
 									
-									// if certain functions are specified, provide restricted registration
+										// If only certain functions are specified, provide restricted registration
 									if (is_array($conf['registerPHPFunctions.'])) {
 
-										// test if functions can be called
+											// Test if the functions can be called
 										$registeredFunctions = array();
 										foreach ($conf['registerPHPFunctions.'] as $key => $function) {
 											if (strpos($function, '::')) {
@@ -140,41 +156,45 @@ class tx_cobj_xslt {
 											}
 										}
 										
-										// now register all valid functions
+											// Now register all the valid functions
 										if (count($registeredFunctions) > 0) {
 											$xslt->registerPHPFunctions($registeredFunctions);
 										} else {
 											$GLOBALS['TT']->setTSlogMessage('None of the functions specified in registerPHPFunctions were callable so nothing gets registered.', 3);
 										}
 										
-									// if the property was just set to 1, register all PHP functions without any restrictions
+										// If registerPHPFunctions was just set to 1, register all PHP functions without any restrictions
 									} else {
 										$xslt->registerPHPFunctions();
 									}
 								}
 								
-								// if there already was a result from a former transformation...
+									// If there already was a result from a former transformation
 								if ($result) {
 																		
-									// load the formerly transformed XML into a new DOM object
+										// Load the formerly transformed XML into a new DOM object
 									$formerResult = t3lib_div::makeInstance('DOMDocument');
 
-									// the of the former transformation is valid, apply the new transformation
+										// If the output of the former transformation is valid XML, apply the next transformation
 									if ($formerResult->loadXML($result) !== FALSE) {
 										$result = $xslt->transformToXML($formerResult);
 									} else {
 										$GLOBALS['TT']->setTSlogMessage('The XML transformation with '.$index.' failed because the XML resulting from the former transformation could not be processed.', 3);
 									}
 									
-								// if this is the first run pass the already loaded DOM object
+									// First run, pass the already loaded DOM object
 								} else {
 									$result = $xslt->transformToXML($domXML);														
 								}
-								
-								// debug output
-								if (isset($conf['debug'])) t3lib_div::debug($result);
-								
-// setProfiling
+
+									// Load profiling result from file into admin panel
+								if (isset($conf['setProfiling'])) {
+									$profilingInformation = str_replace(' ', ' ', t3lib_div::getURL($profilingTempFile));
+									$GLOBALS['TT']->setTSlogMessage('Profiling result for XSL stylesheet ' . $index . ':' . "\n" . $profilingInformation, 1);
+									t3lib_div::unlink_tempfile($profilingTempFile);
+								}
+									// Debug output if configured
+								if ($conf['debug'] === 1) t3lib_utility_Debug::debug($result);
 								
 							} else {
 								$GLOBALS['TT']->setTSlogMessage('The stylesheet '.$index.' could not be loaded or contained errors.', 3);								
@@ -188,19 +208,17 @@ class tx_cobj_xslt {
 						return $oCObj->stdWrap($content, $conf['stdWrap.']);
 						
 					} else {
-						$GLOBALS['TT']->setTSlogMessage('There were no XSL stylesheets to process the content.', 3);
-						return $oCObj->stdWrap($content, $conf['stdWrap.']);								
+						$GLOBALS['TT']->setTSlogMessage('There were no XSL stylesheets to process the content.', 3);								
 					}							
 					
 				} else {
 					$GLOBALS['TT']->setTSlogMessage('XML could not be converted to a DOM object.', 3);
-					return $oCObj->stdWrap($content, $conf['stdWrap.']);
 				}
 				
 			} else {			
 				$errors = libxml_get_errors();
 				foreach ($errors as $error) {
-					$GLOBALS['TT']->setTSlogMessage('XML Problem: '.$this->display_xml_error($error, $xml), 3);
+					$GLOBALS['TT']->setTSlogMessage('XML Problem: '.$this->getXmlErrorCode($error), 3);
 				}
 				libxml_clear_errors();
 			}			
@@ -208,6 +226,8 @@ class tx_cobj_xslt {
 		} else {
 			$GLOBALS['TT']->setTSlogMessage('The configured XML source did not return any data.', 3);
 		}
+		
+		return $oCObj->stdWrap($content, $conf['stdWrap.']);
 	}
 
 	/**
@@ -215,30 +235,31 @@ class tx_cobj_xslt {
 	 * <xsl:value-of select="php:functionString('tx_cobj_xslt::typoscriptObjectPath', 'lib.my.object', YOUR XPATH)"/>
 	 * registerPHPfunctions has to be set to true within the XSLT configuration for this to work
 	 * 
-	 * @param 	string	The setup key to be applied from global TypoScript scope
-	 * @param	mixed	The matches of the XPATH expression within the XSL stylesheet
-	 * @return	string	The rendered TypoScript object
+	 * @param string $key The setup key to be applied from global TypoScript scope
+	 * @param mixed	$data The matches of the XPATH expression within the XSL stylesheet
+	 * 
+	 * @return string The rendered TypoScript object
 	 */
 	public static function typoscriptObjectPath($key, $data) {
 		
-		// set current value - first possibility is an array of DOMElements (if called with php:function)
-		// for this scenario accumulate all matches to an xml string and hand this over to TypoScript processing
+			// Set data to the current value - first possibility is an incoming array of DOMElements (if called with php:function in the XSL styleheet)
 		if (is_array($data)) {
 			$currentVal = '';
+			// Accumulate all matches to a XML string and hand it over for TypoScript processing
 			foreach ($data as $match) {
 				$currentVal .= $match->C14N(0,1);
 				$GLOBALS['TSFE']->cObj->setCurrentVal($currentVal);
 			}
-		// second possibility is an incoming string (if called with php:functionString)
+			// Second possibility is an incoming string (if called with php:functionString in the XSL stylesheet)
 		} else {
 			$GLOBALS['TSFE']->cObj->setCurrentVal($data);
 		}
 		
-		// get TypoScript configuration from global tmpl scope
+			// Get TypoScript configuration from global scope
 		$tsParser = t3lib_div::makeInstance('t3lib_tsparser');
 		$configuration = $tsParser->getVal($key, $GLOBALS['TSFE']->tmpl->setup);
 		
-		// process and return TS object
+			// Process and return a TS object
 		if (is_array($configuration)) {
 			return $GLOBALS['TSFE']->cObj->cObjGetSingle($configuration[0], $configuration[1]);
 		} else {
@@ -248,38 +269,39 @@ class tx_cobj_xslt {
 	}	
 	
 	/**
-	 * Returns XML error codes for the TSFE admin panel. Function inspired by http://www.php.net/manual/en/function.libxml-get-errors.php
+	 * Returns XML error codes for the TSFE admin panel.
+	 * Function inspired by http://www.php.net/manual/en/function.libxml-get-errors.php
 	 *
-	 * @param	string
-	 * @param	string
-	 * @return	string
+	 * @param LibXMLError $error
+	 * @return string
 	 */
-	private function display_xml_error($error, $xml) {
+	private function getXmlErrorCode(LibXMLError $error) {
+		$errormessage = '';
 
 		switch ($error->level) {
 			case LIBXML_ERR_WARNING:
-				$errormessage .= 'Warning '.$error->code.': ';
-			break;
+				$errormessage .= 'Warning ' . $error->code . ': ';
+				break;
 			case LIBXML_ERR_ERROR:
-				$errormessage .= 'Error '.$error->code.': ';
-			break;
+				$errormessage .= 'Error ' . $error->code . ': ';
+				break;
 			case LIBXML_ERR_FATAL:
-				$errormessage .= 'Fatal error '.$error->code.': ';
-			break;
+				$errormessage .= 'Fatal error ' . $error->code . ': ';
+				break;
 		}
 
-		$errormessage .= trim($error->message).' - Line: '.$error->line.', Column:'.$error->column;
+		$errormessage .= trim($error->message) . ' - Line: ' . $error->line . ', Column:' . $error->column;
 
 		if ($error->file) {
-			$errormessage .= ' - File: '.$error->file;
+			$errormessage .= ' - File: ' . $error->file;
 		}
 
-	    return $errormessage;
+		return $errormessage;
 	}
 	
 }
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/cobj_xslt/class.tx_cobj_xslt.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/cobj_xslt/class.tx_cobj_xslt.php']);
+if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/cobj_xslt/class.tx_cobj_xslt.php'])) {
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/cobj_xslt/class.tx_cobj_xslt.php']);
 }
 ?>

@@ -14,7 +14,9 @@ my.object {
 		10 = [object name :: function name]
 	}
 	
-	debug = [BOOLEAN]	
+	debug = [BOOLEAN]
+	
+	setProfiling = [BOOLEAN]	
 	
 	stdWrap [stdWrap]
 

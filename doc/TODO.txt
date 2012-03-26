@@ -8,8 +8,5 @@ setParameters {
 
 - support for get & removeParameters ?
 
-setProfiling = 1
-setProfiling.file = /path/to/output
-
 transformToURI = 1
 transformToURI.file = /path/to/output
