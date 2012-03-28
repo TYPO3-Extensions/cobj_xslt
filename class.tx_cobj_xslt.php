@@ -106,20 +106,19 @@ class tx_cobj_xslt {
 				
 						foreach ($conf['transformations.'] as $index => $transformation) {
 							
-								// Prepare new DOM for this run
+								// Prepare new XSL DOM for this run
 							$this->xsl = t3lib_div::makeInstance('DOMDocument');							
 
-								// Load XSL styles either from stdWrap, file or string (in that sequence)
-							if (is_array($transformation['stylesheet.'])) {
-								
+								// Load XSL styles either from url, stdWrap, or path/string (in that sequence)
+							if (t3lib_div::isValidUrl($transformation['stylesheet.']['url'])) {								
+								$xslLoaded = $this->xsl->loadXML(t3lib_div::getURL($transformation['stylesheet.']['url'], 0, FALSE));
+							} elseif (is_array($transformation['stylesheet.'])) {								
 								$stylesheet = $oCObj->stdWrap($transformation['stylesheet'], $transformation['stylesheet.']);
 								$xslLoaded = $this->loadXslStylesheet($stylesheet);
-								
-								// Get with styles with stdWrap
 							} elseif (isset($transformation['stylesheet'])) {
 								$xslLoaded = $this->loadXslStylesheet($transformation['stylesheet']);
 							}
-								// If the loading didn't succeed, skip this run
+								// If the loading wasn't successfull, skip this run
 							if ($xslLoaded === FALSE) {
 								$GLOBALS['TT']->setTSlogMessage('No XSL stylesheet set for transformation '.$index.'', 3);
 								continue;
@@ -128,14 +127,14 @@ class tx_cobj_xslt {
 								// Start XSLT processing				
 							if ($this->xsl instanceof DOMDocument) {
 
-									// Create a new processor and import current stylesheet
+									// Create a new XSLT processor and import the current stylesheet
 								$this->xslt = t3lib_div::makeInstance('XSLTProcessor');
 								$this->xslt->importStylesheet($this->xsl);
 								
-									// Possibility to register PHP functions for usage within the XSL stylesheets
+									// Possibility to register PHP functions for use within the XSL stylesheet
 								if (isset($transformation['registerPHPFunctions'])) {
 									
-										// If only certain functions are specified, provide restricted registration
+										// If particular functions are configured, provide restricted registration
 									if (is_array($transformation['registerPHPFunctions.'])) {
 
 											// Test if the functions can be called
@@ -153,7 +152,7 @@ class tx_cobj_xslt {
 											}
 										}
 										
-											// Now register all the valid functions
+											// Now register all valid functions
 										if (count($registeredFunctions) > 0) {
 											$this->xslt->registerPHPFunctions($registeredFunctions);
 										} else {
@@ -174,7 +173,6 @@ class tx_cobj_xslt {
 											$paramName = substr($parameter, 0, -1);
 											$paramNamespace = $value['namespace'];
 											$paramValue = $oCObj->stdWrap($value['value'], $value['value.']);
-												// Register with processor
 											$this->xslt->setParameter($paramNamespace, $paramName, $paramValue);
 										} else {
 											$GLOBALS['TT']->setTSlogMessage('Settig the parameter ' . $parameter . ' failed due to misconfiguration', 3);
@@ -182,7 +180,7 @@ class tx_cobj_xslt {
 									}								
 								}
 								
-									// Remove parameters for this transformation
+									// Remove parameters from this stylesheet
 								if (is_array($transformation['removeParameters.'])) {
 								
 									foreach ($transformation['removeParameters.'] as $parameter => $value) {
@@ -201,37 +199,38 @@ class tx_cobj_xslt {
 									$this->xslt->setProfiling($profilingTempFile);
 								}
 								
-									// If there already was a result from a former transformation
+									// If there is a result from a former transformation of the source
 								if ($result !== '') {
 																		
-										// Load the formerly transformed XML into a new DOM object
+										// Load the transformed XML from the last run into a new DOM object
 									$formerResult = t3lib_div::makeInstance('DOMDocument');
 
-										// If the output of the former transformation is valid XML, apply the next transformation
+										// If the XML is valid, apply the current XSL transformation
 									if ($formerResult->loadXML($result) !== FALSE) {
 										$result = $this->xslt->transformToXML($formerResult);
 									} else {
 										$GLOBALS['TT']->setTSlogMessage('The XML transformation with '.$index.' failed because the XML resulting from the former transformation could not be processed.', 3);
 									}
 									
-									// First run, pass the already loaded DOM object
+									// First run, process the loaded source
 								} else {
 									$result = $this->xslt->transformToXML($domXML);														
 								}
 
-									// Load the profiling result from file into admin panel
+									// Load the profiling result from temporary file into admin panel
 								if (isset($transformation['setProfiling'])) {
 									$profilingInformation = str_replace(' ', ' ', t3lib_div::getURL($profilingTempFile));
 									$GLOBALS['TT']->setTSlogMessage('Profiling result for XSL transformation ' . $index . "\n" . $profilingInformation, 1);
 									t3lib_div::unlink_tempfile($profilingTempFile);
 								}
 								
-									// stdWrap to result
+									// stdWrap of this runs transformation
 								if ($transformation['stdWrap.']) {
 									$result = $oCObj->stdWrap($result, $transformation['stdWrap.']);
 								}
 								
-									// Write the result to a file; use TYPO3 functions and not xslt->transformToXML to have stdWrap on content included
+									// If set write the result of this transformation to a file
+									// Use TYPO3 functions here (and not transformToURI) so that the stdWrap output can be included
 								if ($resultFile = t3lib_div::getFileAbsFileName($transformation['transformToURI'])) {
 									t3lib_div::writeFile($resultFile, $result);
 								}
@@ -241,7 +240,7 @@ class tx_cobj_xslt {
 							}
 						}
 						
-						// set content to final result from all transformations
+						// Set content to final result of all transformations
 						$content = $result;						
 						
 					} else {
@@ -306,17 +305,15 @@ class tx_cobj_xslt {
 	}
 	
 	/**
-	 * Tries to load XSL stlyes from either a file or string
+	 * Tries to loads a XSL stylesheet from a path or a string
 	 * 
 	 * @param string $stylesheet The XSL styles as string or a file path
-	 * @return void
+	 * @return boolean
 	 */
-	private function loadXslStylesheet($stylesheet) {		
-		// Is path to a file?
-		$file = t3lib_div::getFileAbsFileName($stylesheet);
-		if (t3lib_div::isAbsPath($file) === TRUE) {
-			return $this->xsl->load($file);
-			// No file, take the string as stylesheet
+	private function loadXslStylesheet($stylesheet) {	
+		$path = t3lib_div::getFileAbsFileName($stylesheet);
+		if (t3lib_div::isAbsPath($path) === TRUE) {
+			return $this->xsl->load($path);
 		} else {
 			return $this->xsl->loadXML($stylesheet);
 		}

@@ -11,6 +11,7 @@ my.object {
 		1 {
 		
 			stylesheet = [STRING / PATH / stdWrap]
+			stylesheet.url = [URL]
 			
 			transformToURI = [PATH]
 			
