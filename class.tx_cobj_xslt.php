@@ -165,6 +165,34 @@ class tx_cobj_xslt {
 										$this->xslt->registerPHPFunctions();
 									}
 								}
+
+									// Set parameters for this stylesheet
+								if (is_array($transformation['setParameters.'])) {
+
+									foreach ($transformation['setParameters.'] as $parameter => $value) {										
+										if (substr($parameter, -1) == '.' && is_array($value)) {										
+											$paramName = substr($parameter, 0, -1);
+											$paramNamespace = $value['namespace'];
+											$paramValue = $oCObj->stdWrap($value['value'], $value['value.']);
+												// Register with processor
+											$this->xslt->setParameter($paramNamespace, $paramName, $paramValue);
+										} else {
+											$GLOBALS['TT']->setTSlogMessage('Settig the parameter ' . $parameter . ' failed due to misconfiguration', 3);
+										}
+									}								
+								}
+								
+									// Remove parameters for this transformation
+								if (is_array($transformation['removeParameters.'])) {
+								
+									foreach ($transformation['removeParameters.'] as $parameter => $value) {
+										$paramName = substr($parameter, 0, -1);
+										if (isset($value['namespace'])) {
+											$paramNamespace = $value['namespace'];
+										}
+										$this->xslt->removeParameter($paramNamespace, $paramName);
+									}
+								}								
 								
 									// Activate profiling if configured
 									// @TODO: PHP 5.3 check to warn if still used with TYPO3 4.5 and PHP 5.2
@@ -240,12 +268,12 @@ class tx_cobj_xslt {
 	}
 
 	/**
-	 * Static wrapper function for calling TypoScript cObjects within XSL stylesheets, e.g. by doing 
+	 * Static wrapper function for calling TypoScript cObjects from XSL stylesheets, e.g. by doing 
 	 * <xsl:value-of select="php:functionString('tx_cobj_xslt::typoscriptObjectPath', 'lib.my.object', YOUR XPATH)"/>
-	 * registerPHPfunctions has to be set to true within the XSLT configuration for this to work
+	 * registerPHPfunctions must be set in the configuration of the cObj for this to work
 	 * 
-	 * @param string $key The setup key to be applied from global TypoScript scope
-	 * @param mixed	$data The matches of the XPATH expression within the XSL stylesheet
+	 * @param string $key The setup key to be applied from the global TypoScript scope
+	 * @param mixed	$data The matches of the XPATH expression from the XSL stylesheet
 	 * 
 	 * @return string The rendered TypoScript object
 	 */
@@ -254,7 +282,7 @@ class tx_cobj_xslt {
 			// Set data to the current value - first possibility is an incoming array of DOMElements (if called with php:function in the XSL styleheet)
 		if (is_array($data)) {
 			$currentVal = '';
-			// Accumulate all matches to a XML string and hand it over for TypoScript processing
+				// Accumulate all matches to a XML string and hand it over for TypoScript processing
 			foreach ($data as $match) {
 				$currentVal .= $match->C14N(0,1);
 				$GLOBALS['TSFE']->cObj->setCurrentVal($currentVal);

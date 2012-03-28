@@ -1,3 +1,5 @@
+## Example TS configuration for cObj XSLT ##
+
 my.object = XSLT
 my.object {
 
@@ -18,17 +20,21 @@ my.object {
 			}
 			
 			setParameters {
-				namespace = [STRING / stdWrap]
-				name = [STRING / stdWrap]
-				value = [STRING / stdWrap]
+				your_parameter {
+					namespace = [STRING]
+					value =  [STRING / stdWrap]
+				}
 			}
 			
-			removeParameters {
+			removeParameters {				
+				your_parameter {
+					namespace = [STRING]
+				}
 			}
 			
 			setProfiling = [BOOLEAN]
 			
-			stdWrap = [stdWrap to content of transformation]
+			stdWrap = [stdWrap to result of this transformation]
 		}
 		
 		2 {
@@ -37,5 +43,4 @@ my.object {
 	}
 	
 	stdWrap [stdWrap to the whole object]
-
 }
