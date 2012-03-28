@@ -228,7 +228,7 @@ class tx_cobj_xslt {
 								
 									// stdWrap to result
 								if ($transformation['stdWrap.']) {
-									$oCObj->stdWrap($result, $transformation['stdWrap.']);
+									$result = $oCObj->stdWrap($result, $transformation['stdWrap.']);
 								}
 								
 									// Write the result to a file; use TYPO3 functions and not xslt->transformToXML to have stdWrap on content included
