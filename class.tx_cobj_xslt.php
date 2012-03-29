@@ -63,7 +63,7 @@ class tx_cobj_xslt {
 		$content = '';
 		
 			// Check if necessary XML extensions are loaded with PHP
-		if (extension_loaded('SimpleXML') && extension_loaded('libxml') && extension_loaded('dom')) {
+		if (extension_loaded('SimpleXML') && extension_loaded('libxml') && extension_loaded('dom') && extension_loaded('xsl')) {
 					
 				// Fetch XML data
 			if (is_array($conf['source.']) || isset($conf['source'])) {
