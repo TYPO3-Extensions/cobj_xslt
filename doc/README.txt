@@ -5,9 +5,9 @@ my.object {
 
 	source = [STRING / stdWrap]
 	source.url = [URL]
-	
+
 	transformations {
-		
+
 		1 {
 		
 			stylesheet = [STRING / PATH / stdWrap]
@@ -15,33 +15,33 @@ my.object {
 			
 			transformToURI = [PATH]
 			
-			registerPHPFunctions = [BOOLEAN / ARRAY]	
+			registerPHPFunctions = [BOOLEAN / ARRAY]
 			registerPHPFunctions {
 				10 = [object name :: function name]
 			}
-			
+
 			setParameters {
-				your_parameter {
+				parametername {
 					namespace = [STRING]
 					value =  [STRING / stdWrap]
 				}
 			}
-			
-			removeParameters {				
-				your_parameter {
+
+			removeParameters {
+				parametername {
 					namespace = [STRING]
 				}
 			}
-			
+
 			setProfiling = [BOOLEAN]
-			
+
 			stdWrap = [stdWrap to result of this transformation]
 		}
-		
+
 		2 {
 			[...]
 		}
 	}
-	
+
 	stdWrap [stdWrap to the whole object]
 }
