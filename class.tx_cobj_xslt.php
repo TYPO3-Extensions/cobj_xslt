@@ -70,14 +70,21 @@ class tx_cobj_xslt {
 							
 					// Get XML by external url
 				if (isset($conf['source.']['url']) && t3lib_div::isValidUrl($conf['source.']['url'])) {
-					
+										
 					$xmlsource = t3lib_div::getURL($conf['source.']['url'], 0, FALSE);
-					if (!$xmlsource) $GLOBALS['TT']->setTSlogMessage('XML could not be fetched from URL.', 3);
-					
-					// Get XML with stdWrap
+					if (!$xmlsource) {
+						$GLOBALS['TT']->setTSlogMessage('XML could not be fetched from URL.', 3);
+					}
+					// Get source by stdWrap
 				} else {
-					if ($conf['source.']['url']) unset($conf['source.']['url']);
-					$xmlsource = $oCObj->stdWrap($conf['source'], $conf['source.']);				
+					if ($conf['source.']['url']) {
+						unset($conf['source.']['url']);
+					}
+					$xmlsource = $oCObj->stdWrap($conf['source'], $conf['source.']);
+						// If a filepath is given, transform this to an absolute path and fetch data
+					if ($path = t3lib_div::getFileAbsFileName($xmlsource)) {
+						$xmlsource = t3lib_div::getURL($path, 0, FALSE);
+					}			
 				}		
 			} else {
 				$GLOBALS['TT']->setTSlogMessage('Source for XML is not configured.', 3);
@@ -260,7 +267,7 @@ class tx_cobj_xslt {
 			}
 			
 		} else {
-			$GLOBALS['TT']->setTSlogMessage('The PHP extensions SimpleXML, DOM and libxml must be loaded.', 3);
+			$GLOBALS['TT']->setTSlogMessage('The PHP extensions SimpleXML, dom, xsl and libxml must be loaded.', 3);
 		}
 		
 		return $oCObj->stdWrap($content, $conf['stdWrap.']);
