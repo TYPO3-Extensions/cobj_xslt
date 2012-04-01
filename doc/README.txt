@@ -3,15 +3,13 @@
 my.object = XSLT
 my.object {
 
-	source = [STRING / stdWrap]
-	source.url = [URL]
+	source = [URL / PATH / STRING / stdWrap]
 
 	transformations {
 
 		1 {
 		
-			stylesheet = [STRING / PATH / stdWrap]
-			stylesheet.url = [URL]
+			stylesheet = [URL / PATH / STRING / stdWrap]
 			
 			transformToURI = [PATH]
 			

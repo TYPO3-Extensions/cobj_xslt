@@ -1,0 +1,11 @@
+# Please also check the activity view at http://forge.typo3.org/projects/extension-cobj_xslt/activity?show_changesets=1
+
+1.1.0
+=====
+
+* TypoScript change: The former 'source.url' and 'stylesheet.url' properties are dropped and the functionality is now fused into the parent property. This makes it possible to use stdWrap for constructing URLs to the resources.
+
+1.0.0
+=====
+
+* First public version. Manual included.

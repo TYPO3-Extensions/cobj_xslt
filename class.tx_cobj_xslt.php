@@ -65,26 +65,16 @@ class tx_cobj_xslt {
 			// Check if necessary XML extensions are loaded with PHP
 		if (extension_loaded('SimpleXML') && extension_loaded('libxml') && extension_loaded('dom') && extension_loaded('xsl')) {
 
-				// Fetch XML data
-			if (is_array($conf['source.']) || isset($conf['source'])) {
-
-					// Get XML by external url
-				if (isset($conf['source.']['url']) && t3lib_div::isValidUrl($conf['source.']['url'])) {
-
-					$xmlsource = t3lib_div::getURL($conf['source.']['url'], 0, FALSE);
-					if (!$xmlsource) {
-						$GLOBALS['TT']->setTSlogMessage('XML could not be fetched from URL.', 3);
-					}
-					// Get source by stdWrap
-				} else {
-					if ($conf['source.']['url']) {
-						unset($conf['source.']['url']);
-					}
-					$xmlsource = $oCObj->stdWrap($conf['source'], $conf['source.']);
-						// If a filepath is given, transform this to an absolute path and fetch data
-					if ($path = t3lib_div::getFileAbsFileName($xmlsource)) {
-						$xmlsource = t3lib_div::getURL($path, 0, FALSE);
-					}
+				// Fetch XML data - if source is neither a valid url nor a path, its considered a XML string
+			if (isset($conf['source']) || is_array($conf['source.'])) {
+					// First process the source property with stdWrap
+				$xmlsource = $oCObj->stdWrap($conf['source'], $conf['source.']);
+					// Fetch by URL
+				if (t3lib_div::isValidUrl($xmlsource)) {
+					$xmlsource = t3lib_div::getURL($xmlsource, 0, FALSE);
+					// Fetch by absolute path
+				} elseif ($path = t3lib_div::getFileAbsFileName($xmlsource)) {
+					$xmlsource = t3lib_div::getURL($path, 0, FALSE);
 				}
 			} else {
 				$GLOBALS['TT']->setTSlogMessage('Source for XML is not configured.', 3);
@@ -116,14 +106,14 @@ class tx_cobj_xslt {
 								// Prepare new XSL DOM for this run
 							$this->xsl = t3lib_div::makeInstance('DOMDocument');
 
-								// Load XSL styles either from url, stdWrap, or path/string (in that sequence)
-							if (t3lib_div::isValidUrl($transformation['stylesheet.']['url'])) {
+								// Get current stylesheet with stdWrap
+							$stylesheet = $oCObj->stdWrap($transformation['stylesheet'], $transformation['stylesheet.']);
+
+								// Load XSL styles either from url or path/string
+							if (t3lib_div::isValidUrl($stylesheet)) {
 								$xslLoaded = $this->xsl->loadXML(t3lib_div::getURL($transformation['stylesheet.']['url'], 0, FALSE));
-							} elseif (is_array($transformation['stylesheet.'])) {
-								$stylesheet = $oCObj->stdWrap($transformation['stylesheet'], $transformation['stylesheet.']);
+							} else {
 								$xslLoaded = $this->loadXslStylesheet($stylesheet);
-							} elseif (isset($transformation['stylesheet'])) {
-								$xslLoaded = $this->loadXslStylesheet($transformation['stylesheet']);
 							}
 								// If the loading wasn't successfull, skip this run
 							if ($xslLoaded === FALSE) {
