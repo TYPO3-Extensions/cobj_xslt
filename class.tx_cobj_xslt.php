@@ -67,19 +67,19 @@ class tx_cobj_xslt {
 
 				// Fetch XML data - if source is neither a valid url nor a path, its considered a XML string
 			if (isset($conf['source']) || is_array($conf['source.'])) {
-					// First process the source property with stdWrap
+					// First process the source string with stdWrap
 				$xmlsource = $oCObj->stdWrap($conf['source'], $conf['source.']);
-					// Fetch by URL
-				if (t3lib_div::isValidUrl($xmlsource)) {
-					$xmlsource = t3lib_div::getURL($xmlsource, 0, FALSE);
-					// Fetch by absolute path
-				} elseif ($path = t3lib_div::getFileAbsFileName($xmlsource)) {
+					// Fetch by (possible) path
+				$path = t3lib_div::getFileAbsFileName($xmlsource);
+				if (@is_file($path) === TRUE) {
 					$xmlsource = t3lib_div::getURL($path, 0, FALSE);
+					// Fetch by (possible) URL
+				} elseif (t3lib_div::isValidUrl($xmlsource) === TRUE) {
+					$xmlsource = t3lib_div::getURL($xmlsource, 0, FALSE);
 				}
 			} else {
 				$GLOBALS['TT']->setTSlogMessage('Source for XML is not configured.', 3);
 			}
-
 				// start XSLT transformation
 			if (!empty($xmlsource)) {
 
@@ -314,14 +314,14 @@ class tx_cobj_xslt {
 	 * @param string $stylesheet The XSL styles as string or a file path
 	 * @return boolean
 	 */
-	private function loadXslStylesheet($stylesheet) {		
-		$path = t3lib_div::getFileAbsFileName($stylesheet);
-		if (t3lib_div::isAbsPath($path) === TRUE) {
+	private function loadXslStylesheet($stylesheet) {
+		$path = t3lib_div::getFileAbsFileName($stylesheet);		
+		if (@is_file($path) === TRUE) {
 			return $this->xsl->load($path);
 		} else {
 			return $this->xsl->loadXML($stylesheet);
 		}
-	}	
+	}
 
 	/**
 	 * Returns XML error codes for the TSFE admin panel.
