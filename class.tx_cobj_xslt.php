@@ -315,7 +315,7 @@ class tx_cobj_xslt {
 	 * @return boolean
 	 */
 	private function loadXslStylesheet($stylesheet) {
-		$path = t3lib_div::getFileAbsFileName($stylesheet);		
+		$path = t3lib_div::getFileAbsFileName($stylesheet);
 		if (@is_file($path) === TRUE) {
 			return $this->xsl->load($path);
 		} else {
