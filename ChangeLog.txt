@@ -1,5 +1,12 @@
 # Please also check the activity view at http://forge.typo3.org/projects/extension-cobj_xslt/activity?show_changesets=1
 
+1.2.0
+=====
+* New XSLT view helper for Fluid
+* New tutorial: XSLT and FLUIDTEMPLATE
+* New tutorial: <xslt> TypoTag
+* Bugfix: New loading mechanism for XSL stylesheets that now supports all types (stdWrap,string,path,url)
+
 1.1.1
 =====
 * Bugfix: Loading XML & XSLT files from a path could fail in certain circumstances. Fixed the manual.

@@ -39,13 +39,17 @@ class tx_cobj_xslt {
 	/**
 	 * @var DOMDocument $xsl Instance for loading a XSL stylesheet during a transformation run
 	 */
-	var $xsl;
+	protected $xsl;
 
 	/**
-	 * 
 	 * @var XSLTProcessor $xslt XSLT Processor instance during a transformation run
 	 */
-	var $xslt;
+	protected $xslt;
+
+	/**
+	 * @var tslib_cObj
+	 */
+	protected $cObj;
 
 	/**
 	 * Renders the XSLT content object
@@ -61,22 +65,14 @@ class tx_cobj_xslt {
 	public function cObjGetSingleExt($name, array $conf, $TSkey, tslib_cobj &$oCObj) {
 
 		$content = '';
+		$this->cObj = $oCObj;
 
 			// Check if necessary XML extensions are loaded with PHP
 		if (extension_loaded('SimpleXML') && extension_loaded('libxml') && extension_loaded('dom') && extension_loaded('xsl')) {
 
-				// Fetch XML data - if source is neither a valid url nor a path, its considered a XML string
+				// Fetch XML data
 			if (isset($conf['source']) || is_array($conf['source.'])) {
-					// First process the source string with stdWrap
-				$xmlsource = $oCObj->stdWrap($conf['source'], $conf['source.']);
-					// Fetch by (possible) path
-				$path = t3lib_div::getFileAbsFileName($xmlsource);
-				if (@is_file($path) === TRUE) {
-					$xmlsource = t3lib_div::getURL($path, 0, FALSE);
-					// Fetch by (possible) URL
-				} elseif (t3lib_div::isValidUrl($xmlsource) === TRUE) {
-					$xmlsource = t3lib_div::getURL($xmlsource, 0, FALSE);
-				}
+				$xmlsource = $this->fetchXml($conf['source'], $conf['source.']);
 			} else {
 				$GLOBALS['TT']->setTSlogMessage('Source for XML is not configured.', 3);
 			}
@@ -103,21 +99,15 @@ class tx_cobj_xslt {
 
 						foreach ($conf['transformations.'] as $index => $transformation) {
 
-								// Prepare new XSL DOM for this run
+								// Prepare new XSL for this run
 							$this->xsl = t3lib_div::makeInstance('DOMDocument');
 
-								// Get current stylesheet with stdWrap
-							$stylesheet = $oCObj->stdWrap($transformation['stylesheet'], $transformation['stylesheet.']);
+								// get stylesheet for the transformation
+							$stylesheet = $this->fetchXml($transformation['stylesheet'], $transformation['stylesheet.']);
 
-								// Load XSL styles either from url or path/string
-							if (t3lib_div::isValidUrl($stylesheet)) {
-								$xslLoaded = $this->xsl->loadXML(t3lib_div::getURL($transformation['stylesheet.']['url'], 0, FALSE));
-							} else {
-								$xslLoaded = $this->loadXslStylesheet($stylesheet);
-							}
-								// If the loading wasn't successfull, skip this run
-							if ($xslLoaded === FALSE) {
-								$GLOBALS['TT']->setTSlogMessage('No XSL stylesheet set for transformation '.$index.'', 3);
+								// If loading of the stylesheet isn't successfull, skip this run
+							if ($this->xsl->loadXML($stylesheet) === FALSE) {
+								$GLOBALS['TT']->setTSlogMessage('No valid XSL stylesheet set for transformation '.$index.'', 3);
 								continue;
 							}
 
@@ -170,7 +160,7 @@ class tx_cobj_xslt {
 										if (substr($parameter, -1) == '.' && is_array($value) === TRUE) {
 											$paramName = substr($parameter, 0, -1);
 											$paramNamespace = $value['namespace'];
-											$paramValue = $oCObj->stdWrap($value['value'], $value['value.']);
+											$paramValue = $this->cObj->stdWrap($value['value'], $value['value.']);
 											$this->xslt->setParameter($paramNamespace, $paramName, $paramValue);
 										} else {
 											$GLOBALS['TT']->setTSlogMessage('Settig the parameter ' . $parameter . ' failed due to misconfiguration', 3);
@@ -213,9 +203,9 @@ class tx_cobj_xslt {
 									if ($formerResult->loadXML($result) !== FALSE) {
 										$result = $this->xslt->transformToXML($formerResult);
 									} else {
-										$GLOBALS['TT']->setTSlogMessage('The XML transformation with '.$index.' failed because the XML resulting from the former transformation could not be processed.', 3);
+										$GLOBALS['TT']->setTSlogMessage('XSL transformation '.$index.' failed because the XML resulting from the former transformation is invalid.', 3);
 									}
-									
+
 									// First run, process the loaded source
 								} else {
 									$result = $this->xslt->transformToXML($domXML);
@@ -230,7 +220,7 @@ class tx_cobj_xslt {
 
 									// stdWrap of this runs transformation
 								if ($transformation['stdWrap.']) {
-									$result = $oCObj->stdWrap($result, $transformation['stdWrap.']);
+									$result = $this->cObj->stdWrap($result, $transformation['stdWrap.']);
 								}
 
 									// If set write the result of this transformation to a file
@@ -243,7 +233,7 @@ class tx_cobj_xslt {
 								$GLOBALS['TT']->setTSlogMessage('The stylesheet '.$index.' could not be loaded or contained errors.', 3);
 							}
 						}
-						
+
 						// Set content to final result of all transformations
 						$content = $result;
 
@@ -267,7 +257,7 @@ class tx_cobj_xslt {
 			$GLOBALS['TT']->setTSlogMessage('The PHP extensions SimpleXML, dom, xsl and libxml must be loaded.', 3);
 		}
 
-		return $oCObj->stdWrap($content, $conf['stdWrap.']);
+		return $this->cObj->stdWrap($content, $conf['stdWrap.']);
 	}
 
 	/**
@@ -309,18 +299,25 @@ class tx_cobj_xslt {
 	}
 
 	/**
-	 * Tries to loads a XSL stylesheet from a path or a string
+	 * Tries to fetch XML with stdWrap, from a path or from an url
 	 * 
-	 * @param string $stylesheet The XSL styles as string or a file path
-	 * @return boolean
+	 * @param string $source
+	 * @param string $configuration
+	 * @return string
 	 */
-	private function loadXslStylesheet($stylesheet) {
-		$path = t3lib_div::getFileAbsFileName($stylesheet);
+	private function fetchXml($source, $configuration) {
+		$xml = '';
+			// First process the source string with stdWrap
+		$xml = $this->cObj->stdWrap($source, $configuration);
+			// Fetch by (possible) path
+		$path = t3lib_div::getFileAbsFileName($xml);
 		if (@is_file($path) === TRUE) {
-			return $this->xsl->load($path);
-		} else {
-			return $this->xsl->loadXML($stylesheet);
+			$xml = t3lib_div::getURL($path, 0, FALSE);
+			// Fetch by (possible) URL
+		} elseif (t3lib_div::isValidUrl($xml) === TRUE) {
+			$xml = t3lib_div::getURL($xml, 0, FALSE);
 		}
+		return $xml;
 	}
 
 	/**
