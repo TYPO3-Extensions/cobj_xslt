@@ -218,17 +218,22 @@ class tx_cobj_xslt {
 									t3lib_div::unlink_tempfile($profilingTempFile);
 								}
 
-									// stdWrap of this runs transformation
+									// stdWrap for this transformation
 								if ($transformation['stdWrap.']) {
 									$result = $this->cObj->stdWrap($result, $transformation['stdWrap.']);
 								}
 
 									// If set write the result of this transformation to a file
 									// Use TYPO3 functions here (and not transformToURI) so that the stdWrap output can be included
-								if ($resultFile = t3lib_div::getFileAbsFileName($transformation['transformToURI'])) {
+								if ($resultFile = t3lib_div::getFileAbsFileName($this->cObj->stdWrap($transformation['transformToURI'], $transformation['transformToURI.']))) {
 									t3lib_div::writeFile($resultFile, $result);
 								}
-								
+
+									// supress transformation result if configured; can make sense in szenarios where the transformation output is written to a file
+								if ($transformation['transformToURI.']['supressReturn'] == 1) {
+									$result = '';
+								}
+
 							} else {
 								$GLOBALS['TT']->setTSlogMessage('The stylesheet '.$index.' could not be loaded or contained errors.', 3);
 							}
