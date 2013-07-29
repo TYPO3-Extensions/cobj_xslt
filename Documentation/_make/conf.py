@@ -40,8 +40,8 @@ source_suffix = '.rst'
 master_doc = 'Index'
 
 # General information about the project.
-project = u'test'
-copyright = u'2013, tesseltion'
+project = u'cobj_xslt'
+copyright = u'2013, Torsten Schrade'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -184,8 +184,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('Index', 'test.tex', u'test',
-     u'tesseltion', 'manual'),
+    ('Index', 'cobj_xslt.tex', u'cobj_xslt',
+     u'Torsten Schrade', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -225,8 +225,8 @@ latex_documents = [
 # would mean that specific document would be compressed
 # regardless of the global pdf_compressed setting.
 pdf_documents = [
-    ('Index', 'test', u'test',
-     u'tesseltion'),
+    ('Index', 'cobj_xslt', u'cobj_xslt',
+     u'Torsten Schrade'),
 ]
 
 # A comma-separated list of custom stylesheets. Example:
@@ -313,8 +313,8 @@ pdf_fit_background_mode = 'scale'
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('Index', 'test', u'test',
-     [u'tesseltion'], 1)
+    ('Index', 'cobj_xslt', u'cobj_xslt',
+     [u'Torsten Schrade'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -327,8 +327,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('Index', 'test', u'test',
-     u'tesseltion', 'test', 'One line description of project.',
+    ('Index', 'cobj_xslt', u'cobj_xslt',
+     u'Torsten Schrade', 'cobj_xslt', 'One line description of project.',
      'Miscellaneous'),
 ]
 

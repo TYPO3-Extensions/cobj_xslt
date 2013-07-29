@@ -9,7 +9,7 @@
 .. _start:
 
 =============================================================
-XPATH Content Object
+XSLT Content Object
 =============================================================
 
 .. raw:: latex
@@ -65,4 +65,10 @@ The content of this document is related to TYPO3
 	:titlesonly:
 	:glob:
 
-
+   Introduction/Index
+   UsersManual/Index
+   Configuration/Index
+   Tutorials/Index
+   KnownProblems/Index
+   To-doList/Index
+   Changelog/Index
