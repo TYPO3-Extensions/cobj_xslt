@@ -102,7 +102,7 @@ You can also have a look into the README.txt file within the doc folder to get a
 .. container:: table-row
 
    Property
-         [i].stylesheet
+         transformations.[i].stylesheet
 
    Data type
          string\/stdWrap
@@ -152,7 +152,7 @@ You can also have a look into the README.txt file within the doc folder to get a
 .. container:: table-row
 
    Property
-         [i].transformToURI
+         transformations.[i].transformToURI
 
    Data type
          path\/stdWrap
@@ -176,7 +176,7 @@ You can also have a look into the README.txt file within the doc folder to get a
 .. container:: table-row
 
    Property
-         [i].supressReturn
+         transformations.[i].supressReturn
 
    Data type
          boolean
@@ -198,23 +198,22 @@ You can also have a look into the README.txt file within the doc folder to get a
 .. container:: table-row
 
    Property
-         [i].registerPHPFunctions
+         transformations.[i].registerPHPFunctions
 
    Data type
-         Boolean \+ sub array of PHP function names
+         Boolean \+ array of PHP function names
 
    Description
          The use of PHP functions within XSL stylesheets provides
          really powerful possibilities.
-
-         .. important::
-
-            You must declare the PHP namespace in your XSL stylesheet: xmlns:php="http://php.net/xsl"
-
          If this property is set to 1, all available PHP functions in your
          environment can be called from your XSL stylesheets. This can be
          restricted by providing specific function names in a key => name
          notation below the property.
+
+         .. important::
+
+            You must declare the PHP namespace in your XSL stylesheet: xmlns:php="http://php.net/xsl"
 
          **Example:** ::
 
@@ -264,7 +263,7 @@ You can also have a look into the README.txt file within the doc folder to get a
 .. container:: table-row
 
    Property
-         [i].setParameters
+         transformations.[i].setParameters
 
    Data type
          array \+ subproperties
@@ -305,7 +304,7 @@ You can also have a look into the README.txt file within the doc folder to get a
 .. container:: table-row
 
    Property
-         [i].removeParameters
+         transformations.[i].removeParameters
 
    Data type
          array \+ subproperties
@@ -329,7 +328,7 @@ You can also have a look into the README.txt file within the doc folder to get a
 .. container:: table-row
 
    Property
-         [i].setProfiling
+         transformations.[i].setProfiling
 
    Data type
          boolean
@@ -342,13 +341,14 @@ You can also have a look into the README.txt file within the doc folder to get a
 .. container:: table-row
 
    Property
-         [i].stdWrap
+         transformations.[i].stdWrap
 
    Data type
          stdWrap
 
    Description
-         stdWrap properties for the current transformation.
+         stdWrap properties for the current transformation. Executed before the result is passed to the next
+         transformation and/or written to a file.
 
 
 .. container:: table-row
@@ -372,3 +372,4 @@ You can also have a look into the README.txt file within the doc folder to get a
                }
             }
 
+         Executed on the final result of all transformations just before the content is returned.

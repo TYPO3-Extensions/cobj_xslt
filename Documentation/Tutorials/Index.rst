@@ -20,7 +20,7 @@ Tutorials
 
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 4
    :titlesonly:
    :glob:
 
@@ -28,5 +28,4 @@ Tutorials
    TransformDisplayAnExternalRssFeed/Index
    XsltAndFluidtemplate/Index
    XsltTypotag/Index
-   OtherInterestingUseCases/Index
 

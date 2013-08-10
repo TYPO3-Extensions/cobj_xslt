@@ -18,8 +18,6 @@
 To-Do list
 ----------
 
-Waiting for your feedback.
-
 Feature requests on the `TYPO3 Forge <http://forge.typo3.org/projects
 /extension-cobj_xslt/issues>`_ are always welcome.
 

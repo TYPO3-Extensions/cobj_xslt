@@ -18,9 +18,7 @@
 Known problems
 --------------
 
-None at the moment.
-
-You can report bugs at our `TYPO3 Forge bugtracker
+You can report bugs at the `TYPO3 Forge bugtracker
 <http://forge.typo3.org/projects/extension-cobj_xslt/issues>`_ .
 
 
