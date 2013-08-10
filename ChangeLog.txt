@@ -2,9 +2,10 @@
 
 1.3.0
 =====
-* Set TYPO3 dependency
+* Version compatibility set to 4.5.0-6.1.99
 * Feature: stdWrap for transformToURI
-* Feature: supress output if transformation should only be written to file (transformToURI.supressReturn)
+* Feature: new transformation property supressReturn to suppress output if transformation should only be written to file
+* ReST based manual
 
 1.2.0
 =====

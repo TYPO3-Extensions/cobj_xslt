@@ -15,18 +15,20 @@
 .. role::   php(code)
 
 
-Users manual
+Installation
 ------------
 
-This section specifies some requirements and details about the
-installation procedure.
+Requirements
+^^^^^^^^^^^^
 
+- You need at least PHP 5.2+
 
-.. toctree::
-   :maxdepth: 5
-   :titlesonly:
-   :glob:
+- You need the PHP extensions libxml, SimpleXML, dom and xsl
 
-   Requirements/Index
-   Installation/Index
+- The extension has been tested on TYPO3 versions 4.5 to 6.1.
+
+Installation
+^^^^^^^^^^^^
+
+Simply import it from TER and install. Nothing else needs to be done.
 

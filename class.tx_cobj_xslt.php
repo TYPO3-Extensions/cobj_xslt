@@ -229,8 +229,8 @@ class tx_cobj_xslt {
 									t3lib_div::writeFile($resultFile, $result);
 								}
 
-									// supress transformation result if configured; can make sense in szenarios where the transformation output is written to a file
-								if ($transformation['transformToURI.']['supressReturn'] == 1) {
+									// supress transformation result if configured; makes sense in scenarios where the transformation output is written to a file
+								if ($resultFile && (int) $transformation['supressReturn'] === 1) {
 									$result = '';
 								}
 
