@@ -1,18 +1,9 @@
-﻿.. include:: Images.txt
-
-.. ==================================================
+﻿.. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
 .. -*- coding: utf-8 -*- with BOM.
 
-.. ==================================================
-.. DEFINE SOME TEXTROLES
-.. --------------------------------------------------
-.. role::   underline
-.. role::   typoscript(code)
-.. role::   ts(typoscript)
-   :class:  typoscript
-.. role::   php(code)
+.. include:: ../../Includes.txt
 
 
 Transform & display an external RSS feed
@@ -30,7 +21,7 @@ little demonstration what stuff you can achieve by setting up a XSLT
 pipeline. But let's check the newsfeed from
 http://news.typo3.org/rss.xml first.
 
-::
+.. code-block:: xml
 
    <item>
         <title>FLOW3 1.0.3 has been released</title>
@@ -95,7 +86,9 @@ the page is reloaded, we can already see the fetched news items from
 typo3.org, though still in XML. Now let's spend a minute on thinking
 what we want:
 
-|img-5| First we want the <title>s of each item to be capitalized. Next, we
+.. figure:: ../../Images/manual_html_1e09c320.png
+
+First we want the <title>s of each item to be capitalized. Next, we
 want to display the author of the item (if there is one) and the date
 of publication. Then we want to set a paragraph that contains a
 collection of all <category> tags, separated with commas. Then follows
@@ -121,7 +114,7 @@ by setting
 
 Now we can modify the stylesheet and call PHP functions:
 
-::
+.. code-block:: xslt
 
      <!-- processing of news items -->
      <xsl:template match="item">
@@ -130,14 +123,16 @@ Now we can modify the stylesheet and call PHP functions:
 
 Dadaa, the result:
 
-|img-6| This can be taken further. Looking at the <pubDate>, we see that this
+.. figure:: ../../Images/manual_html_m38497976.png
+
+This can be taken further. Looking at the <pubDate>, we see that this
 is not the format we want for display. We just want a simple
 DD.MM.YYYY notation. What to do? Let's use a combination of PHPs
 strtotime and strftime functions to first convert the textual date to
 a unix string and the the unix string to a reformatted date (silly, I
 know ... but it works ;)
 
-::
+.. code-block:: xslt
 
    <p>
         <span class="date">
@@ -148,7 +143,7 @@ know ... but it works ;)
 Next in stack is to match the <author> tag and put this in front of
 the date, but only if its there. Simple job for XSL:
 
-::
+.. code-block:: xslt
 
    <xsl:if test="author">
            by <em><xsl:value-of select="author"/></em>
@@ -157,7 +152,7 @@ the date, but only if its there. Simple job for XSL:
 
 Now we're up for <category> collection. This is also a XSL classic:
 
-::
+.. code-block:: xslt
 
    <p>
            Tags: 
@@ -173,7 +168,7 @@ The for-each construct iterates over all matched <category> tags, we
 then append a comma, but only of this is not the last element of the
 returned stack. Now for the description:
 
-::
+.. code-block:: xslt
 
    <p><xsl:value-of select="description"/></p>
 
@@ -184,7 +179,7 @@ content of the <link> tags to a typoscriptObjectPath. Please remember
 that you need to have PHP functions registered for this functionality.
 We already did this so lets go:
 
-::
+.. code-block:: xslt
 
    <xsl:value-of select="php:functionString('tx_cobj_xslt::typoscriptObjectPath', 'lib.link', link)" disable-output-escaping="yes"/>
 
@@ -207,7 +202,9 @@ our TS Template, the link library looks like this:
 
 Result:
 
-|img-7| You can find the full XSL stylesheet of this tutorial in the res
+.. figure:: ../../Images/manual_html_m1efc09cf.png
+
+You can find the full XSL stylesheet of this tutorial in the res
 folder of the extension. One last thing: You may notice that all tags
 generated during this transformation still carry the php namespace due
 to our declaration in the stylesheet root. This could be suppressed
@@ -241,4 +238,3 @@ such jobs. This is how it is configured:
    }
 
 Finished. Now everything is nice and clean.
-

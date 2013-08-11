@@ -26,7 +26,7 @@
 /**
  * Usage:
  * 
- * <xslt:transform transformations="{0: {stylesheet: 'path/to/stylesheet.xsl', setProfiling: 1, registerPHPFunctions: 1, transformToURI: 'path/to/file.xml'}}" />
+ * <xslt:transform transformations="{0: {stylesheet: 'path/to/stylesheet.xsl', setProfiling: 1, registerPHPFunctions: 1, transformToURI: 'path/to/file.xml', suppressReturn: 1}}" />
  * 
  * The transformations property of the view helper expects an array of configurations, just as you would normally do it from TypoScript.
  * Only the four configuration keys from above are allowed; no setParameter/removeParameter; you are in a Fluid context, this should not be necessary
@@ -85,6 +85,7 @@ class Tx_CobjXslt_ViewHelpers_TransformViewHelper extends Tx_Fluid_Core_ViewHelp
 				if (array_key_exists('setProfiling', $transformation)) $configuration['transformations.'][$i]['setProfiling'] = (int) $transformation['setProfiling'];
 				if (array_key_exists('registerPHPFunctions', $transformation)) $configuration['transformations.'][$i]['registerPHPFunctions'] = (int) $transformation['registerPHPFunctions'];
 				if (array_key_exists('transformToURI', $transformation)) $configuration['transformations.'][$i]['transformToURI'] = $transformation['transformToURI'];
+				if (array_key_exists('suppressReturn', $transformation)) $configuration['transformations.'][$i]['suppressReturn'] = $transformation['suppressReturn'];
 			}
 			$configuration['source'] = trim($source);
 			$content = $this->contentObject->cObjHookObjectsArr['XSLT']->cObjGetSingleExt('XSLT', $configuration, '', $this->contentObject);

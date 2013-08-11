@@ -1,18 +1,9 @@
-﻿.. include:: Images.txt
-
-.. ==================================================
+﻿.. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
 .. -*- coding: utf-8 -*- with BOM.
 
-.. ==================================================
-.. DEFINE SOME TEXTROLES
-.. --------------------------------------------------
-.. role::   underline
-.. role::   typoscript(code)
-.. role::   ts(typoscript)
-   :class:  typoscript
-.. role::   php(code)
+.. include:: ../../Includes.txt
 
 
 <xslt> TypoTag
@@ -28,7 +19,9 @@ content element. In this tutorial, we will look at another possibility
 that is quite flexible and convenient: a <xslt> TypoTag. It will look
 like this:
 
-|img-8| This is the source when the RTE is disabled:
+.. figure:: ../../Images/manual_html_78e304d8.png
+
+This is the source when the RTE is disabled:
 
 ::
 
@@ -36,7 +29,9 @@ like this:
 
 Optionally for our editors we could provide a userElement:
 
-|img-9| The obvious advantage of a TypoTag in comparison to the other
+.. figure:: ../../Images/manual_html_60d7b4cd.png
+
+The obvious advantage of a TypoTag in comparison to the other
 approaches is that it can be used everywhere in the system. You could
 also use it in a news record or an address element. Only an input
 field is needed that is treated with the good old
@@ -141,4 +136,3 @@ The RTE normally will not display any tag attributes. But in our case
 it can be helpful to see which stylesheet is set. This can be achieved
 with pure CSS using the :before pseudo-selector and the content
 property in combination with CSS's attr() function.
-

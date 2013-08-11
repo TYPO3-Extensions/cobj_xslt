@@ -1,18 +1,9 @@
-﻿
-
-.. ==================================================
+﻿.. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
 .. -*- coding: utf-8 -*- with BOM.
 
-.. ==================================================
-.. DEFINE SOME TEXTROLES
-.. --------------------------------------------------
-.. role::   underline
-.. role::   typoscript(code)
-.. role::   ts(typoscript)
-   :class:  typoscript
-.. role::   php(code)
+.. include:: ../../Includes.txt
 
 
 XSLT and FLUIDTEMPLATE
@@ -77,74 +68,22 @@ TypoScript, the second level of this array is associative. The keys
 reflect the according TypoScript properties. Notice: You can only use
 the following four properties in the view helper:
 
-
-.. ### BEGIN~OF~TABLE ###
-
-.. container:: table-row
-
-   Property
-         Property:
-   
-   Data type
-         Data type:
-   
-   Description
-         Description:
-
-
-.. container:: table-row
-
-   Property
-         stylesheet
-   
-   Data type
-         string/path
-   
-   Description
-         Sets the XSL stylesheet for the current transformation
-
-
-.. container:: table-row
-
-   Property
-         setProfiling
-   
-   Data type
-         boolean
-   
-   Description
-         Outputs profiling information in the TSFE admin panel
-
-
-.. container:: table-row
-
-   Property
-         registerPHPFunctions
-   
-   Data type
-         boolean
-   
-   Description
-         Allows the use of PHP functions in XSL stylesheets. Notice: Within the
-         view helper context the limitation to certain functions is not
-         implemented, you always allow all callable PHP functions for the
-         stylesheet
-
-
-.. container:: table-row
-
-   Property
-         transformToURI
-   
-   Data type
-         path/file
-   
-   Description
-         File to write the result of the current transformation to
-
-
-.. ###### END~OF~TABLE ######
-
++----------------------+---------------------------------------------------------------+
+| property             | description                                                   |
++======================+===============================================================+
+| stylesheet           | Sets the XSL stylesheet for the current transformation        |
++----------------------+---------------------------------------------------------------+
+| setProfiling         | Outputs profiling information in the TSFE admin panel         |
++----------------------+---------------------------------------------------------------+
+| registerPHPFunctions | Allows the use of PHP functions in XSL stylesheets. Notice:   |
+|                      | Within the view helper context the limitation to certain      |
+|                      | functions is not implemented, you always allow all callable   |
+|                      | PHP functions for the stylesheet)                             |
++----------------------+---------------------------------------------------------------+
+| transformToURI       | File to write the result of the current transformation to     |
++----------------------+---------------------------------------------------------------+
+| suppressReturn       | Only write to file and suppress returning the result          |
++----------------------+---------------------------------------------------------------+
 
 The above code produces precisely the same result as in the first
 tutorial. Just to show you how you could have solved the second
@@ -155,4 +94,3 @@ tutorial about the RSS feed in pure Fluid:
    <xslt:transform source="http://news.typo3.org/rss.xml" transformations="{0: {stylesheet: 'fileadmin/xslt/rss.xsl', registerPHPFunctions: 1, setProfiling: 1}, 1: {stylesheet: 'fileadmin/xslt/rm.namespaces.xsl', setProfiling: 1}}" />
 
 That's it. Enjoy!
-

@@ -1,18 +1,9 @@
-﻿
-
-.. ==================================================
+﻿.. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
 .. -*- coding: utf-8 -*- with BOM.
 
-.. ==================================================
-.. DEFINE SOME TEXTROLES
-.. --------------------------------------------------
-.. role::   underline
-.. role::   typoscript(code)
-.. role::   ts(typoscript)
-   :class:  typoscript
-.. role::   php(code)
+.. include:: ../Includes.txt
 
 
 Reference
@@ -163,7 +154,7 @@ You can also have a look into the README.txt file within the doc folder to get a
          for debugging multi-transformation scenarios. Its also useful for providing
          generated XML resources that can then be picked up by following XSLT
          objects. If the result of a transformation should only be written to a file
-         without returning the result, use the property [i].supressReturn.
+         without returning the result, use the property [i].suppressReturn.
 
          **Example:** ::
 
@@ -176,21 +167,21 @@ You can also have a look into the README.txt file within the doc folder to get a
 .. container:: table-row
 
    Property
-         transformations.[i].supressReturn
+         transformations.[i].suppressReturn
 
    Data type
          boolean
 
    Description
          If [i].transformToURI is used and the result should only be written to 
-         the file, you can use this property to completely supress the return 
+         the file, you can use this property to completely suppress the return 
          of the transformation.
 
          **Example:** ::
 
             transformations.1 {
                transformToURI = fileadmin/transformation-1.xml
-               supressReturn = 1
+               suppressReturn = 1
                [...]
             }
 

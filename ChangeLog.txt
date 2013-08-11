@@ -4,7 +4,7 @@
 =====
 * Version compatibility set to 4.5.0-6.1.99
 * Feature: stdWrap for transformToURI property
-* Feature: new property supressReturn to suppress output if a transformation should only be written to file
+* Feature: new property suppressReturn to suppress output if a transformation should only be written to file
 * ReST based manual
 
 1.2.0

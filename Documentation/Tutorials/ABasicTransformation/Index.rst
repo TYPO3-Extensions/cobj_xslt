@@ -1,18 +1,9 @@
-﻿.. include:: Images.txt
-
-.. ==================================================
+﻿.. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
 .. -*- coding: utf-8 -*- with BOM.
 
-.. ==================================================
-.. DEFINE SOME TEXTROLES
-.. --------------------------------------------------
-.. role::   underline
-.. role::   typoscript(code)
-.. role::   ts(typoscript)
-   :class:  typoscript
-.. role::   php(code)
+.. include:: ../../Includes.txt
 
 
 A basic transformation
@@ -22,7 +13,7 @@ Let's explain some of the basic features of the XSLT content object
 like loading the XML and XSL data and starting a transformation. We
 have the following XML in a file in our fileadmin folder:
 
-::
+.. code-block:: xml
 
    <?xml version="1.0"?>
    <collection>
@@ -41,7 +32,7 @@ have the following XML in a file in our fileadmin folder:
 During page generation, we want to load the XML and transform it to
 the following HTML:
 
-::
+.. code-block:: html
 
    <h1>CD Collection</h1>
    <h2>Hey! Welcome to our sweet CD collection!</h2>
@@ -86,7 +77,7 @@ file. If everything is ok, the XSLT processor is started and runs
 through all configured transformation steps. The final result is
 passed to stdWrap, like you can see above. Here's the XSL stylesheet:
 
-::
+.. code-block:: xml
 
    <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
    
@@ -110,7 +101,9 @@ passed to stdWrap, like you can see above. Here's the XSL stylesheet:
 
 And here is the output:
 
-|img-3| Nice. But wait... what's that “default” thingy doing within the <h1>?
+.. figure:: ../../Images/manual_html_670467ff.png
+
+Nice. But wait... what's that “default” thingy doing within the <h1>?
 When we check the stylesheet, we see that the plan seems to have been
 to set the content of the <h1> dynamically using a <xsl:param>. We
 will fill in the title of the current TYPO3 page. For this, we simply
@@ -135,5 +128,6 @@ with stdWrap:
 
 Output:
 
-|img-4| Ah, that's better ;)
+.. figure:: ../../Images/manual_html_105e423b.png
 
+Ah, that's better ;)
