@@ -8,11 +8,11 @@ my.object {
 	transformations {
 
 		1 {
-		
+
 			stylesheet = [URL / PATH / STRING / stdWrap]
-			
+
 			transformToURI = [PATH]
-			
+
 			registerPHPFunctions = [BOOLEAN / ARRAY]
 			registerPHPFunctions {
 				10 = [object name :: function name]
