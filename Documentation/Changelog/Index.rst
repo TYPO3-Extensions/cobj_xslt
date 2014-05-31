@@ -12,6 +12,12 @@ ChangeLog
 +----------------+---------------------------------------------------------------+
 | Version        | Changes                                                       |
 +================+===============================================================+
+| 1.6.0          | - Version compatibility set to 4.5.0-6.2.99                   |
+|                |                                                               |
+|                | - Set extension version to be in line with cobj_xpath again   |
+|                |                                                               |
+|                | - Minor modifications in manual                               |
++----------------+---------------------------------------------------------------+
 | 1.3.0          | - Version compatibility set to 4.5.0-6.1.99                   |
 |                |                                                               |
 |                | - ReST based manual                                           |

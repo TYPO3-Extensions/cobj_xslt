@@ -16,7 +16,7 @@ Requirements
 
 - You need the PHP extensions libxml, SimpleXML, dom and xsl
 
-- The extension has been tested on TYPO3 versions 4.5 to 6.1.
+- The extension has been tested on TYPO3 versions 4.5 to 6.2.
 
 Installation
 ^^^^^^^^^^^^

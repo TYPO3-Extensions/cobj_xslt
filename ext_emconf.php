@@ -12,7 +12,7 @@
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'XSLT Content Object',
-	'description' => 'Extends tslib_cObj with a new cObject XSLT for flexible XML transformations with XSL and TypoScript.',
+	'description' => 'Extends TypoScript with a new cObject XSLT for flexible XML transformations with XSL.',
 	'category' => 'fe',
 	'author' => 'Torsten Schrade',
 	'author_email' => 'schradt@uni-mainz.de',
@@ -29,12 +29,12 @@ $EM_CONF[$_EXTKEY] = array(
 	'clearCacheOnLoad' => 1,
 	'lockType' => '',
 	'author_company' => 'Academy of Sciences and Literature | Mainz',
-	'version' => '1.3.0',
+	'version' => '1.6.0',
 	'CGLcompliance' => '',
 	'CGLcompliance_note' => '',
 	'constraints' => array(
 		'depends' => array(
-			'typo3' => '4.5.0-6.1.99',
+			'typo3' => '4.5.0-6.2.99',
 		),
 		'conflicts' => array(
 		),

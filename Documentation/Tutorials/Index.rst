@@ -11,12 +11,11 @@ Tutorials
 
 
 .. toctree::
-   :maxdepth: 5
-   :titlesonly:
-   :glob:
+	:maxdepth: 5
+	:titlesonly:
+	:glob:
 
-   ABasicTransformation/Index
-   TransformDisplayAnExternalRssFeed/Index
-   XsltAndFluidtemplate/Index
-   XsltTypotag/Index
-
+	ABasicTransformation/Index
+	TransformDisplayAnExternalRssFeed/Index
+	XsltAndFluidtemplate/Index
+	XsltTypotag/Index
