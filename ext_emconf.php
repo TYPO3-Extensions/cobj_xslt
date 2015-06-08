@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'Extends TypoScript with a new cObject XSLT for flexible XML transformations with XSL.',
 	'category' => 'fe',
 	'author' => 'Torsten Schrade',
-	'author_email' => 'schradt@uni-mainz.de',
+	'author_email' => 'Torsten.Schrade@adwmainz.de',
 	'shy' => 0,
 	'dependencies' => '',
 	'conflicts' => '',
@@ -34,7 +34,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'CGLcompliance_note' => '',
 	'constraints' => array(
 		'depends' => array(
-			'typo3' => '4.5.0-6.2.99',
+			'typo3' => '6.2.0-6.2.99',
 		),
 		'conflicts' => array(
 		),

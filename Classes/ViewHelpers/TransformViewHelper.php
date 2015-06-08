@@ -88,7 +88,8 @@ class Tx_CobjXslt_ViewHelpers_TransformViewHelper extends Tx_Fluid_Core_ViewHelp
 				if (array_key_exists('suppressReturn', $transformation)) $configuration['transformations.'][$i]['suppressReturn'] = $transformation['suppressReturn'];
 			}
 			$configuration['source'] = trim($source);
-			$content = $this->contentObject->cObjHookObjectsArr['XSLT']->cObjGetSingleExt('XSLT', $configuration, '', $this->contentObject);
+			$content = $this->contentObject->cObjGetSingle('XSLT', $configuration, '');
+
 		}
 
 		return $content;
