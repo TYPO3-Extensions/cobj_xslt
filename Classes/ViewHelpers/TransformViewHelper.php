@@ -1,8 +1,9 @@
 <?php
+namespace ADWLM\CobjXslt\ViewHelpers;
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2013 Torsten Schrade <schradt@uni-mainz.de>
+*  Copyright (c) 2015 Torsten Schrade <Torsten.Schrade@adwmainz.de>
 *
 *  All rights reserved
 *
@@ -30,31 +31,26 @@
  * 
  * The transformations property of the view helper expects an array of configurations, just as you would normally do it from TypoScript.
  * Only the four configuration keys from above are allowed; no setParameter/removeParameter; you are in a Fluid context, this should not be necessary
- * 
- * @author Torsten Schrade
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @package dabase
+ *
  */
 
-class Tx_CobjXslt_ViewHelpers_TransformViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class TransformViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
-	 * @var Tx_Extbase_Configuration_ConfigurationManagerInterface
+	 * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @var tslib_cObj
+	 * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
 	 */
 	protected $contentObject;
 
 	/**
-	 * @param Tx_Extbase_Configuration_ConfigurationManagerInterface $configurationManager
+	 * @param \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager
 	 * @return void
 	 */
-	public function injectConfigurationManager(Tx_Extbase_Configuration_ConfigurationManagerInterface $configurationManager) {
+	public function injectConfigurationManager(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager) {
 		$this->configurationManager = $configurationManager;
 		$this->contentObject = $this->configurationManager->getContentObject();
 		$this->contentObject->start(array(),'');
@@ -65,11 +61,10 @@ class Tx_CobjXslt_ViewHelpers_TransformViewHelper extends Tx_Fluid_Core_ViewHelp
 	 * 
 	 * @param mixed $source
 	 * @param array $transformations
-	 * @param string $return
 	 * 
 	 * @return mixed
 	 */
-	public function render($source=NULL, $transformations=array()) {
+	public function render($source = NULL, $transformations = array()) {
 
 		$content = '';
 

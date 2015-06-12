@@ -237,7 +237,7 @@ You can also have a look into the README.txt file within the doc folder to get a
             transformations.1 {
                 registerPHPFunctions = 1
                 registerPHPFunctions {
-                   1 = tx_cobj_xslt::typoscriptObjectPath
+                   1 = \ADWLM\CobjXslt\ContentObject\XsltContentObject::typoscriptObjectPath
                 }
             }
 
@@ -245,7 +245,7 @@ You can also have a look into the README.txt file within the doc folder to get a
 
          .. code-block:: xslt
 
-            <xsl:value-of select="php:functionString('tx_cobj_xslt::typoscriptObjectPath', 'lib.my.cObject', title)"/>
+            <xsl:value-of select="php:functionString('\ADWLM\CobjXslt\ContentObject\XsltContentObject::typoscriptObjectPath', 'lib.my.cObject', title)"/>
 
          This will submit the matches found by the stylesheet to lib.my.cObject
          for further processing.

@@ -35,7 +35,7 @@ namespace:
 
 ::
 
-   {namespace xslt=Tx_CobjXslt_ViewHelpers}
+   {namespace xslt=ADWLM\CobjXslt\ViewHelpers}
 
 We can now call the view helper with <xslt:transform>. It just takes
 two attributes: “source” and “transformations”. Within “source” you

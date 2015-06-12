@@ -12,6 +12,10 @@ ChangeLog
 +----------------+---------------------------------------------------------------+
 | Version        | Changes                                                       |
 +================+===============================================================+
+| 1.7.0          | - Version compatibility set to 6.2.0-7.9.99                   |
+|                |                                                               |
+|                | - Namespace and class refactoring                             |
++----------------+---------------------------------------------------------------+
 | 1.6.0          | - Version compatibility set to 4.5.0-6.2.99                   |
 |                |                                                               |
 |                | - Set extension version to be in line with cobj_xpath again   |

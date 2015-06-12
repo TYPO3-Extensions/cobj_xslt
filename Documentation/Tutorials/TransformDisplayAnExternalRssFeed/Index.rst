@@ -181,11 +181,11 @@ We already did this so lets go:
 
 .. code-block:: xslt
 
-   <xsl:value-of select="php:functionString('tx_cobj_xslt::typoscriptObjectPath', 'lib.link', link)" disable-output-escaping="yes"/>
+   <xsl:value-of select="php:functionString('\ADWLM\CobjXslt\ContentObject\XsltContentObject::typoscriptObjectPath', 'lib.link', link)" disable-output-escaping="yes"/>
 
 Instead of calling standard PHP core functions, we can also call
 static functions from our classes. TyposcriptObjectPath is called
-statically for the tx\_cobj\_xslt class. The second parameter adresses
+statically for the XsltContentObject class. The second parameter adresses
 which TypoScript object should treat the incoming values of our XPATH
 (the third parameter). Don't forget to set disable-output-escaping,
 otherwise any HTML generated from TypoScript will be escaped. Within
