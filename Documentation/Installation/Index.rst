@@ -12,11 +12,11 @@ Installation
 Requirements
 ^^^^^^^^^^^^
 
-- You need at least PHP 5.2+
+- You need at least PHP 5.3+
 
 - You need the PHP extensions libxml, SimpleXML, dom and xsl
 
-- The extension has been tested on TYPO3 versions 4.5 to 6.2.
+- The extension has been tested on TYPO3 versions 6.2 to 7.x
 
 Installation
 ^^^^^^^^^^^^

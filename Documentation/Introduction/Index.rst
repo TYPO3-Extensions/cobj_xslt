@@ -65,15 +65,6 @@ And much more...
 Credits
 ^^^^^^^
 
-This extension has been developed for the `Digital Humanities
+This extension has been developed within the context of the `Digital Humanities
 <http://www.digitale-akademie.de/projekte/matrix.html>`_ projects
-of the `Digital Academy Mainz <http://www.digitale-akademie.de/>`_
-where we have to deal with lots of XML. Glad if you find it
-useful too.
-
-Please rate
-^^^^^^^^^^^
-
-We're always looking forward to your ratings in TER. Good ratings
-encourage us to go on, bad ratings encourage us to make the stuff
-better ;)
+of the `Digital Academy Mainz <http://www.digitale-akademie.de/>`_.
