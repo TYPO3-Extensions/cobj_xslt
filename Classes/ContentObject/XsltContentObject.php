@@ -159,7 +159,7 @@ class XsltContentObject {
 											$paramValue = $this->cObj->stdWrap($value['value'], $value['value.']);
 											$this->xslt->setParameter($paramNamespace, $paramName, $paramValue);
 										} else {
-											$GLOBALS['TT']->setTSlogMessage('Settig the parameter ' . $parameter . ' failed due to misconfiguration', 3);
+											$GLOBALS['TT']->setTSlogMessage('Setting the parameter ' . $parameter . ' failed due to misconfiguration', 3);
 										}
 									}
 								}
